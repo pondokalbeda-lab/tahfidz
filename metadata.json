@@ -1,0 +1,6 @@
+{
+  "name": "Mutaba'ah & Absensi Tahfidz Al-Furqon",
+  "description": "Aplikasi rekapitulasi mutaba'ah hafalan Al-Qur'an dan absensi santri Pesantren Tahfidz Al-Furqon",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
