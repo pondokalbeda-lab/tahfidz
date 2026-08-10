@@ -11,7 +11,10 @@ import {
   RotateCcw,
   Save,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  CloudUpload,
+  CloudDownload,
+  Loader2
 } from 'lucide-react';
 import { PesantrenInfo, Halaqah, Santri } from '../types';
 import {
@@ -19,6 +22,7 @@ import {
   importDataFromJSON,
   resetAllDataToDefault
 } from '../utils/storage';
+import { syncToCloud, fetchFromCloud } from '../utils/api';
 
 interface KelolaDataTabProps {
   pesantrenInfo: PesantrenInfo;
@@ -42,6 +46,8 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
   // Pesantren Form State
   const [pesantrenForm, setPesantrenForm] = useState<PesantrenInfo>(pesantrenInfo);
   const [successMsg, setSuccessMsg] = useState<string>('');
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState<{text: string, type: 'success'|'error'|''} >({text: '', type: ''});
 
   // Halaqah Modal State
   const [showHalaqahModal, setShowHalaqahModal] = useState(false);
@@ -112,6 +118,35 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
     if (confirm('Yakin ingin menghapus halaqah ini?')) {
       onSaveHalaqahList(halaqahList.filter((h) => h.id !== id));
     }
+  };
+
+  const handleSyncToCloud = async () => {
+    setIsSyncing(true);
+    setSyncMsg({ text: 'Menyinkronkan data ke Cloud...', type: '' });
+    const success = await syncToCloud();
+    if (success) {
+      setSyncMsg({ text: 'Data berhasil disinkronkan ke Cloud!', type: 'success' });
+    } else {
+      setSyncMsg({ text: 'Gagal menyinkronkan data ke Cloud.', type: 'error' });
+    }
+    setIsSyncing(false);
+    setTimeout(() => setSyncMsg({ text: '', type: '' }), 4000);
+  };
+
+  const handleFetchFromCloud = async () => {
+    if (!confirm('Peringatan: Mengambil data dari Cloud akan menimpa semua data lokal saat ini. Lanjutkan?')) return;
+    
+    setIsSyncing(true);
+    setSyncMsg({ text: 'Mengambil data dari Cloud...', type: '' });
+    const success = await fetchFromCloud();
+    if (success) {
+      setSyncMsg({ text: 'Data berhasil diambil dan diterapkan!', type: 'success' });
+      onRefreshData();
+    } else {
+      setSyncMsg({ text: 'Gagal mengambil data dari Cloud.', type: 'error' });
+    }
+    setIsSyncing(false);
+    setTimeout(() => setSyncMsg({ text: '', type: '' }), 4000);
   };
 
   // Export JSON
@@ -289,6 +324,48 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
               {h.keterangan && <p className="text-slate-400 italic">{h.keterangan}</p>}
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Cloud Sync Section */}
+      <div className="bg-emerald-50 rounded-2xl p-6 shadow-sm border border-emerald-200 space-y-4">
+        <div className="pb-3 border-b border-emerald-100">
+          <h2 className="text-lg font-bold text-emerald-900">Sinkronisasi Cloud (Google Sheets)</h2>
+          <p className="text-xs text-emerald-700">Simpan dan ambil data dari Spreadsheet yang Anda siapkan</p>
+        </div>
+
+        {syncMsg.text && (
+          <div className={`p-3 rounded-lg text-sm flex items-center space-x-2 ${
+            syncMsg.type === 'success' ? 'bg-emerald-100 text-emerald-800' :
+            syncMsg.type === 'error' ? 'bg-rose-100 text-rose-800' :
+            'bg-blue-100 text-blue-800'
+          }`}>
+            {isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : 
+             syncMsg.type === 'error' ? <AlertCircle className="w-4 h-4" /> :
+             <CheckCircle2 className="w-4 h-4" />
+            }
+            <span>{syncMsg.text}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button type="button"
+            onClick={handleSyncToCloud}
+            disabled={isSyncing}
+            className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white p-4 rounded-2xl text-xs font-bold transition flex flex-col items-center justify-center space-y-2 border border-emerald-700"
+          >
+            <CloudUpload className="w-6 h-6 text-emerald-200" />
+            <span>Simpan Data ke Cloud</span>
+          </button>
+
+          <button type="button"
+            onClick={handleFetchFromCloud}
+            disabled={isSyncing}
+            className="bg-white hover:bg-emerald-50 disabled:opacity-50 text-emerald-800 border border-emerald-300 p-4 rounded-2xl text-xs font-bold transition flex flex-col items-center justify-center space-y-2"
+          >
+            <CloudDownload className="w-6 h-6 text-emerald-600" />
+            <span>Ambil Data dari Cloud</span>
+          </button>
         </div>
       </div>
 
