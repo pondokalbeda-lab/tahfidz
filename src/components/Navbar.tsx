@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   BookOpen,
   UserCheck,
@@ -11,7 +11,9 @@ import {
   Building2,
   Moon,
   Sun,
-  RefreshCw
+  RefreshCw,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { PesantrenInfo } from '../types';
 
@@ -43,6 +45,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   darkMode,
   toggleDarkMode,
 }) => {
+  const [isTabsVisible, setIsTabsVisible] = useState(true);
+
   return (
     <header className="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
       {/* Top Banner / Islamic Aesthetic Accent */}
@@ -129,67 +133,91 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex space-x-1 sm:space-x-2 mt-5 border-t border-emerald-700 pt-3 overflow-x-auto no-scrollbar">
-          <button
-            onClick={() => setActiveTab('absensi')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'absensi'
-                ? 'bg-slate-50 text-emerald-800 font-bold'
-                : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-            }`}
-          >
-            <UserCheck className="w-4 h-4" />
-            <span>Absensi Santri</span>
-          </button>
+        <div className="mt-5 border-t border-emerald-700 pt-3 relative">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs text-emerald-300 font-medium hidden sm:inline-block">Menu Navigasi</span>
+            <button
+              onClick={() => setIsTabsVisible(!isTabsVisible)}
+              className="text-xs bg-emerald-800/50 hover:bg-emerald-700 text-emerald-100 px-3 py-1 rounded-full border border-emerald-600/50 transition-colors ml-auto flex items-center space-x-1"
+            >
+              {isTabsVisible ? (
+                <>
+                  <ChevronUp className="w-3 h-3" />
+                  <span>Sembunyikan Tab</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3" />
+                  <span>Tampilkan Tab</span>
+                </>
+              )}
+            </button>
+          </div>
+          
+          {isTabsVisible && (
+            <nav className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+              <button
+                onClick={() => setActiveTab('absensi')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'absensi'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                }`}
+              >
+                <UserCheck className="w-4 h-4" />
+                <span>Absensi Santri</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('mutabaah')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'mutabaah'
-                ? 'bg-slate-50 text-emerald-800 font-bold'
-                : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-            }`}
-          >
-            <BookOpen className="w-4 h-4" />
-            <span>Mutaba'ah Setoran</span>
-          </button>
+              <button
+                onClick={() => setActiveTab('mutabaah')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'mutabaah'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Mutaba'ah Setoran</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('santri')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'santri'
-                ? 'bg-slate-50 text-emerald-800 font-bold'
-                : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            <span>Data Santri & Raport</span>
-          </button>
+              <button
+                onClick={() => setActiveTab('santri')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'santri'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                <span>Data Santri & Raport</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('rekap')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'rekap'
-                ? 'bg-slate-50 text-emerald-800 font-bold'
-                : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4" />
-            <span>Rekap & Ranking</span>
-          </button>
+              <button
+                onClick={() => setActiveTab('rekap')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'rekap'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+                <span>Rekap & Ranking</span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('kelola')}
-            className={`flex items-center space-x-2 px-4 py-2.5 rounded-t-lg text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'kelola'
-                ? 'bg-slate-50 text-emerald-800 font-bold'
-                : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-            }`}
-          >
-            <Settings className="w-4 h-4" />
-            <span>Pengaturan Data</span>
-          </button>
-        </nav>
+              <button
+                onClick={() => setActiveTab('kelola')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                  activeTab === 'kelola'
+                    ? 'bg-white text-emerald-800 shadow-sm'
+                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                <span>Pengaturan Data</span>
+              </button>
+            </nav>
+          )}
+        </div>
       </div>
     </header>
   );
