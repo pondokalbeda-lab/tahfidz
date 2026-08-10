@@ -10,6 +10,7 @@ export async function syncToCloud(): Promise<boolean> {
     // API script expects payload = { action: 'save_all', data: { pesantren, halaqah, santri, absensi, mutabaah } }
     const response = await fetch(API_URL, {
       method: 'POST',
+      redirect: 'follow',
       headers: {
         'Content-Type': 'text/plain', // GAS requires text/plain for CORS without preflight
       },
@@ -39,7 +40,9 @@ export async function syncToCloud(): Promise<boolean> {
 
 export async function fetchFromCloud(): Promise<boolean> {
   try {
-    const response = await fetch(`${API_URL}?action=get_all`);
+    const response = await fetch(`${API_URL}?action=get_all`, {
+      redirect: 'follow',
+    });
     const result = await response.json();
     
     if (result.status === 'success' && result.data) {

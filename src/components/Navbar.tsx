@@ -14,13 +14,17 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp
+,
+  Menu,
+  LayoutDashboard,
+  X
 } from 'lucide-react';
 import { PesantrenInfo } from '../types';
 
 interface NavbarProps {
   pesantrenInfo: PesantrenInfo;
-  activeTab: 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola';
-  setActiveTab: (tab: 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola') => void;
+  activeTab: 'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola';
+  setActiveTab: (tab: 'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola') => void;
   selectedDate: string;
   setSelectedDate: (date: string) => void;
   totalSantri: number;
@@ -45,7 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   darkMode,
   toggleDarkMode,
 }) => {
-  const [isTabsVisible, setIsTabsVisible] = useState(true);
+  const [isTabsVisible, setIsTabsVisible] = useState(false);
 
   return (
     <header className="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
@@ -93,132 +97,145 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Main Header Content */}
+            {/* Main Header Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Logo & Title */}
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-xl bg-white p-0.5 shadow-sm flex items-center justify-center">
-              <div className="w-full h-full bg-slate-50 rounded-[10px] flex items-center justify-center">
-                <span className="text-emerald-800 font-bold text-xl">AF</span>
+          <div className="flex justify-between items-center w-full md:w-auto">
+            {/* Logo & Title */}
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 rounded-xl bg-white p-0.5 shadow-sm flex items-center justify-center">
+                <div className="w-full h-full bg-slate-50 rounded-[10px] flex items-center justify-center">
+                  <span className="text-emerald-800 font-bold text-xl">AF</span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight">
+                    Al-Furqon Tahfidz Center
+                  </h1>
+                </div>
+                <p className="text-xs text-emerald-100 opacity-80 font-medium mt-0.5">
+                  Sistem Monitoring Mutaba'ah & Absensi
+                </p>
               </div>
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                  Al-Furqon Tahfidz Center
-                </h1>
-              </div>
-              <p className="text-xs text-emerald-100 opacity-80 font-medium mt-0.5">
-                Sistem Monitoring Mutaba'ah & Absensi
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Metrics Cards */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 bg-emerald-900/40 p-2 rounded-xl border border-emerald-700/50">
-            <div className="px-3 py-1.5 text-center border-r border-emerald-700/50">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Total Santri</span>
-              <span className="text-base sm:text-lg font-bold text-white">{totalSantri}</span>
-            </div>
-            <div className="px-3 py-1.5 text-center border-r border-emerald-700/50">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Setoran Hari Ini</span>
-              <span className="text-base sm:text-lg font-bold text-white">{todaySetoranCount}</span>
-            </div>
-            <div className="px-3 py-1.5 text-center">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Kehadiran</span>
-              <span className="text-base sm:text-lg font-bold text-white">{todayAttendancePercent}%</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="mt-5 border-t border-emerald-700 pt-3 relative">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-xs text-emerald-300 font-medium hidden sm:inline-block">Menu Navigasi</span>
+            {/* Hamburger Button (Mobile & Desktop) */}
             <button
               onClick={() => setIsTabsVisible(!isTabsVisible)}
-              className="text-xs bg-emerald-800/50 hover:bg-emerald-700 text-emerald-100 px-3 py-1 rounded-full border border-emerald-600/50 transition-colors ml-auto flex items-center space-x-1"
+              className="p-2 bg-emerald-900/50 hover:bg-emerald-700 text-emerald-100 rounded-lg border border-emerald-600/50 transition-colors md:hidden"
             >
-              {isTabsVisible ? (
-                <>
-                  <ChevronUp className="w-3 h-3" />
-                  <span>Sembunyikan Tab</span>
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3 h-3" />
-                  <span>Tampilkan Tab</span>
-                </>
-              )}
+              {isTabsVisible ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
-          
-          {isTabsVisible && (
-            <nav className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-              <button
-                onClick={() => setActiveTab('absensi')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'absensi'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }`}
-              >
-                <UserCheck className="w-4 h-4" />
-                <span>Absensi Santri</span>
-              </button>
 
-              <button
-                onClick={() => setActiveTab('mutabaah')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'mutabaah'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }`}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Mutaba'ah Setoran</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('santri')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'santri'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }`}
-              >
-                <Users className="w-4 h-4" />
-                <span>Data Santri & Raport</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('rekap')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'rekap'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }`}
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Rekap & Ranking</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('kelola')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                  activeTab === 'kelola'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }`}
-              >
-                <Settings className="w-4 h-4" />
-                <span>Pengaturan Data</span>
-              </button>
-            </nav>
-          )}
+          {/* Hamburger Button Desktop */}
+          <button
+            onClick={() => setIsTabsVisible(!isTabsVisible)}
+            className="hidden md:flex p-2 bg-emerald-900/50 hover:bg-emerald-700 text-emerald-100 rounded-lg border border-emerald-600/50 transition-colors items-center space-x-2 ml-2"
+          >
+            {isTabsVisible ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <span className="text-sm font-medium">{isTabsVisible ? 'Tutup Menu' : 'Menu'}</span>
+          </button>
         </div>
+
+        
       </div>
+      {/* Navigation Drawer (Sidebar) */}
+      {isTabsVisible && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in"
+            onClick={() => setIsTabsVisible(false)}
+          ></div>
+          
+          {/* Sidebar Content */}
+          <div className="relative w-72 max-w-[80vw] h-full bg-emerald-800 border-l border-emerald-700 shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col">
+            <div className="p-4 border-b border-emerald-700 flex justify-between items-center bg-emerald-900/50">
+              <span className="font-bold text-white">Menu Navigasi</span>
+              <button 
+                onClick={() => setIsTabsVisible(false)}
+                className="p-2 bg-emerald-800 hover:bg-emerald-700 rounded-lg text-emerald-100 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4">
+              <nav className="flex flex-col gap-2">
+                <button
+                  onClick={() => { setActiveTab('dashboard'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'dashboard'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                  }`}
+                >
+                  <LayoutDashboard className="w-5 h-5" />
+                  <span>Dashboard</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('absensi'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'absensi'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                  }`}
+                >
+                  <UserCheck className="w-5 h-5" />
+                  <span>Absensi Santri</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('mutabaah'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'mutabaah'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                  }`}
+                >
+                  <BookOpen className="w-5 h-5" />
+                  <span>Mutaba'ah Setoran</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('santri'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'santri'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                  }`}
+                >
+                  <Users className="w-5 h-5" />
+                  <span>Data Santri & Raport</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('rekap'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'rekap'
+                      ? 'bg-white text-emerald-800 shadow-sm'
+                      : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
+                  }`}
+                >
+                  <BarChart3 className="w-5 h-5" />
+                  <span>Rekapitulasi</span>
+                </button>
+                <div className="my-2 border-t border-emerald-700/50"></div>
+                <button
+                  onClick={() => { setActiveTab('kelola'); setIsTabsVisible(false); }}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors w-full ${
+                    activeTab === 'kelola'
+                      ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
+                      : 'bg-emerald-900/40 text-emerald-100 hover:bg-emerald-700 hover:text-white border border-emerald-700/50'
+                  }`}
+                >
+                  <Settings className="w-5 h-5" />
+                  <span>Kelola Data</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
+
   );
 };

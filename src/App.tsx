@@ -24,6 +24,7 @@ import { MutabaahTab } from './components/MutabaahTab';
 import { SantriTab } from './components/SantriTab';
 import { RekapTab } from './components/RekapTab';
 import { KelolaDataTab } from './components/KelolaDataTab';
+import { DashboardTab } from './components/DashboardTab';
 
 export default function App() {
   const [pesantrenInfo, setPesantrenInfo] = useState<PesantrenInfo>(loadPesantrenInfo);
@@ -32,7 +33,7 @@ export default function App() {
   const [absensiRecords, setAbsensiRecords] = useState<AbsensiRecord[]>(loadAbsensiRecords);
   const [mutabaahRecords, setMutabaahRecords] = useState<MutabaahRecord[]>(loadMutabaahRecords);
 
-  const [activeTab, setActiveTab] = useState<'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola'>('absensi');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola'>('dashboard');
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
@@ -171,6 +172,15 @@ export default function App() {
 
         {/* Tab Content Body */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          {activeTab === 'dashboard' && (
+            <DashboardTab
+              pesantrenInfo={pesantrenInfo}
+              totalSantri={santriList.length}
+              todaySetoranCount={todaySetoranCount}
+              todayAttendancePercent={todayAttendancePercent}
+              selectedDate={selectedDate}
+            />
+          )}
           {activeTab === 'absensi' && (
             <AbsensiTab
               santriList={santriList}
