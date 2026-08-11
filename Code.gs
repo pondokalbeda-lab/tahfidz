@@ -1,17 +1,19 @@
 /**
  * Google Apps Script for Setup Database (Spreadsheet)
  * Salin kode ini ke editor Apps Script (Extensions > Apps Script di Google Sheets Anda)
+ * 
+ * PENTING:
+ * Setelah menyalin, lakukan DEPLOY ULANG (New Deployment) agar perubahan tersimpan di URL API.
  */
 
 function setupSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-
+  
   // 1. PesantrenInfo
   let sheetInfo = ss.getSheetByName('PesantrenInfo');
   if (!sheetInfo) {
     sheetInfo = ss.insertSheet('PesantrenInfo');
     sheetInfo.appendRow(['nama', 'lembaga', 'alamat', 'pimpinanTahfidz', 'tahunAjaran', 'semester']);
-    // Memberikan style header
     sheetInfo.getRange("A1:F1").setFontWeight("bold").setBackground("#d9ead3");
   }
 
@@ -53,7 +55,6 @@ function setupSheet() {
     ss.deleteSheet(defaultSheet);
   }
 
-  // Notification
   Browser.msgBox('Setup Selesai', 'Semua sheet dan kolom tabel telah dibuat dengan sukses!', Browser.Buttons.OK);
 }
 
@@ -82,9 +83,9 @@ function doPost(e) {
 
     if (action === "save_all") {
       saveAllData(payload.data);
-      return responseJson({ status: "success", message: "Data berhasil disimpan" });
+      return responseJson({ status: "success", message: "Data berhasil disimpan ke Spreadsheet" });
     }
-
+    
     if (action === "ping") {
       return responseJson({ status: "success", message: "pong" });
     }
