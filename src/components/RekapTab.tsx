@@ -241,43 +241,43 @@ export const RekapTab: React.FC<RekapTabProps> = ({
 
         {/* Aggregated Overview Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          <div className="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-100 flex items-center space-x-3">
+          <div className="bg-emerald-50/70 p-3 sm:p-4 rounded-2xl border border-emerald-100 flex items-center space-x-2 sm:space-x-3">
             <div className="p-3 bg-emerald-600 text-white rounded-xl shadow-md shadow-emerald-700/20">
               <BookOpen className="w-6 h-6" />
             </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-800 tracking-wider">Ziyadah Baru</span>
-              <h3 className="text-xl font-bold text-emerald-950 mt-0.5">{totalZiyadah} Setoran</h3>
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold text-emerald-800 tracking-wider leading-tight">Ziyadah Baru</p>
+              <h3 className="text-lg sm:text-xl font-bold text-emerald-950 mt-0.5 leading-tight">{totalZiyadah} <span className="text-xs sm:text-sm font-semibold">Setoran</span></h3>
             </div>
           </div>
 
-          <div className="bg-teal-50/70 p-4 rounded-2xl border border-teal-100 flex items-center space-x-3">
+          <div className="bg-teal-50/70 p-3 sm:p-4 rounded-2xl border border-teal-100 flex items-center space-x-2 sm:space-x-3">
             <div className="p-3 bg-teal-600 text-white rounded-xl shadow-md shadow-teal-700/20">
               <TrendingUp className="w-6 h-6" />
             </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-teal-800 tracking-wider">Muraja'ah</span>
-              <h3 className="text-xl font-bold text-teal-950 mt-0.5">{totalMurajaah} Setoran</h3>
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold text-teal-800 tracking-wider leading-tight">Muraja'ah</p>
+              <h3 className="text-lg sm:text-xl font-bold text-teal-950 mt-0.5 leading-tight">{totalMurajaah} <span className="text-xs sm:text-sm font-semibold">Setoran</span></h3>
             </div>
           </div>
 
-          <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-100 flex items-center space-x-3">
+          <div className="bg-amber-50/70 p-3 sm:p-4 rounded-2xl border border-amber-100 flex items-center space-x-2 sm:space-x-3">
             <div className="p-3 bg-amber-600 text-white rounded-xl shadow-md shadow-amber-700/20">
               <Award className="w-6 h-6" />
             </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-amber-800 tracking-wider">Ujian Tasmi'</span>
-              <h3 className="text-xl font-bold text-amber-950 mt-0.5">{totalTasmi} Kali</h3>
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold text-amber-800 tracking-wider leading-tight">Ujian Tasmi'</p>
+              <h3 className="text-lg sm:text-xl font-bold text-amber-950 mt-0.5 leading-tight">{totalTasmi} <span className="text-xs sm:text-sm font-semibold">Kali</span></h3>
             </div>
           </div>
 
-          <div className="bg-slate-900 text-white p-4 rounded-2xl border border-slate-800 flex items-center space-x-3">
+          <div className="bg-slate-900 text-white p-3 sm:p-4 rounded-2xl border border-slate-800 flex items-center space-x-2 sm:space-x-3">
             <div className="p-3 bg-emerald-500 text-slate-950 rounded-xl font-bold">
               <UserCheck className="w-6 h-6" />
             </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Tingkat Kehadiran</span>
-              <h3 className="text-xl font-bold text-white mt-0.5">{attendancePercent}%</h3>
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] sm:text-[10px] uppercase font-bold text-emerald-400 tracking-wider leading-tight">Tingkat Kehadiran</p>
+              <h3 className="text-lg sm:text-xl font-bold text-white mt-0.5 leading-tight">{attendancePercent}%</h3>
             </div>
           </div>
         </div>

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+const fs = require('fs');
+
+const navbarCode = `import React, { useState, useEffect } from 'react';
 import {
   BookOpen,
   UserCheck,
@@ -143,57 +145,57 @@ export const Navbar: React.FC<NavbarProps> = ({
               <nav className="flex flex-col gap-1">
                 <button
                   onClick={() => { setActiveTab('dashboard'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'dashboard'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  }\`}
                 >
-                  <LayoutDashboard className={`w-4 h-4 ${activeTab === 'dashboard' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <LayoutDashboard className={\`w-4 h-4 \${activeTab === 'dashboard' ? 'text-emerald-600' : 'text-slate-400'}\`} />
                   <span>Dashboard</span>
                 </button>
                 <button
                   onClick={() => { setActiveTab('absensi'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'absensi'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  }\`}
                 >
-                  <UserCheck className={`w-4 h-4 ${activeTab === 'absensi' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <UserCheck className={\`w-4 h-4 \${activeTab === 'absensi' ? 'text-emerald-600' : 'text-slate-400'}\`} />
                   <span>Absensi Santri</span>
                 </button>
                 <button
                   onClick={() => { setActiveTab('mutabaah'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'mutabaah'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  }\`}
                 >
-                  <BookOpen className={`w-4 h-4 ${activeTab === 'mutabaah' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <BookOpen className={\`w-4 h-4 \${activeTab === 'mutabaah' ? 'text-emerald-600' : 'text-slate-400'}\`} />
                   <span>Mutaba'ah Setoran</span>
                 </button>
                 <button
                   onClick={() => { setActiveTab('santri'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'santri'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  }\`}
                 >
-                  <Users className={`w-4 h-4 ${activeTab === 'santri' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <Users className={\`w-4 h-4 \${activeTab === 'santri' ? 'text-emerald-600' : 'text-slate-400'}\`} />
                   <span>Data Santri & Raport</span>
                 </button>
                 <button
                   onClick={() => { setActiveTab('rekap'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'rekap'
                       ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                  }\`}
                 >
-                  <BarChart3 className={`w-4 h-4 ${activeTab === 'rekap' ? 'text-emerald-600' : 'text-slate-400'}`} />
+                  <BarChart3 className={\`w-4 h-4 \${activeTab === 'rekap' ? 'text-emerald-600' : 'text-slate-400'}\`} />
                   <span>Rekapitulasi</span>
                 </button>
                 
@@ -201,13 +203,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 
                 <button
                   onClick={() => { setActiveTab('kelola'); setIsTabsVisible(false); }}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full ${
+                  className={\`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all w-full \${
                     activeTab === 'kelola'
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
-                  }`}
+                  }\`}
                 >
-                  <Settings className={`w-4 h-4 ${activeTab === 'kelola' ? 'text-white' : 'text-slate-500'}`} />
+                  <Settings className={\`w-4 h-4 \${activeTab === 'kelola' ? 'text-white' : 'text-slate-500'}\`} />
                   <span>Kelola Data & Sync</span>
                 </button>
               </nav>
@@ -218,3 +220,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   );
 };
+`;
+
+fs.writeFileSync('src/components/Navbar.tsx', navbarCode);

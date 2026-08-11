@@ -1,138 +1,235 @@
 const fs = require('fs');
-let code = fs.readFileSync('src/components/Navbar.tsx', 'utf8');
 
-// Replace the Main Header Content and Navigation Tabs
-const newMainContent = `      {/* Main Header Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex justify-between items-center w-full md:w-auto">
-            {/* Logo & Title */}
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-xl bg-white p-0.5 shadow-sm flex items-center justify-center">
-                <div className="w-full h-full bg-slate-50 rounded-[10px] flex items-center justify-center">
-                  <span className="text-emerald-800 font-bold text-xl">AF</span>
-                </div>
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight">
-                    Al-Furqon Tahfidz Center
-                  </h1>
-                </div>
-                <p className="text-xs text-emerald-100 opacity-80 font-medium mt-0.5">
-                  Sistem Monitoring Mutaba'ah & Absensi
-                </p>
+const navbarCode = `import React, { useState } from 'react';
+import {
+  BookOpen,
+  UserCheck,
+  Users,
+  BarChart3,
+  Settings,
+  Calendar,
+  Building2,
+  Moon,
+  Sun,
+  RefreshCw,
+  Menu,
+  LayoutDashboard,
+  X
+} from 'lucide-react';
+import { PesantrenInfo } from '../types';
+
+interface NavbarProps {
+  pesantrenInfo: PesantrenInfo;
+  activeTab: 'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola';
+  setActiveTab: (tab: 'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'kelola') => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
+  totalSantri: number;
+  todaySetoranCount: number;
+  todayAttendancePercent: number;
+  onRefreshData: () => void;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+  onQuickPrintRaport?: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  pesantrenInfo,
+  activeTab,
+  setActiveTab,
+  selectedDate,
+  setSelectedDate,
+  onRefreshData,
+  darkMode,
+  toggleDarkMode,
+}) => {
+  const [isTabsVisible, setIsTabsVisible] = useState(false);
+
+  return (
+    <header className="bg-emerald-800 text-white shadow-md sticky top-0 z-30">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        <div className="flex items-center justify-between">
+          
+          {/* Left: Logo and Title */}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-lg bg-white p-0.5 shadow-sm flex items-center justify-center hidden sm:flex">
+              <div className="w-full h-full bg-slate-50 rounded-md flex items-center justify-center">
+                <span className="text-emerald-800 font-bold text-lg">AF</span>
               </div>
             </div>
-            {/* Hamburger Button (Mobile & Desktop) */}
+            <div>
+              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white leading-tight flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-emerald-300 sm:hidden" />
+                {pesantrenInfo.nama || 'Al-Furqon Tahfidz'}
+              </h1>
+              <p className="text-xs text-emerald-100 opacity-80 font-medium mt-0.5 hidden sm:block">
+                Sistem Monitoring Mutaba'ah & Absensi
+              </p>
+            </div>
+          </div>
+
+          {/* Right: Controls & Menu */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            
+            {/* Date Picker */}
+            <div className="flex items-center space-x-1.5 bg-emerald-900/50 px-2 py-1.5 rounded-lg border border-emerald-700/50 text-emerald-100 hidden sm:flex">
+              <Calendar className="w-4 h-4" />
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-transparent border-none text-xs text-white focus:outline-none cursor-pointer"
+              />
+            </div>
+            
+            {/* Quick Actions */}
+            <div className="flex items-center space-x-1">
+              <button
+                onClick={onRefreshData}
+                title="Refresh Data"
+                className="p-2 hover:bg-emerald-700 rounded-lg transition-colors"
+              >
+                <RefreshCw className="w-4 h-4 text-emerald-100" />
+              </button>
+              
+              <button
+                onClick={toggleDarkMode}
+                title="Toggle Dark Mode"
+                className="p-2 hover:bg-emerald-700 rounded-lg transition-colors"
+              >
+                {darkMode ? (
+                  <Sun className="w-4 h-4 text-emerald-100" />
+                ) : (
+                  <Moon className="w-4 h-4 text-emerald-100" />
+                )}
+              </button>
+            </div>
+
+            {/* Hamburger Button */}
             <button
-              onClick={() => setIsTabsVisible(!isTabsVisible)}
-              className="p-2 bg-emerald-900/50 hover:bg-emerald-700 text-emerald-100 rounded-lg border border-emerald-600/50 transition-colors md:hidden"
+              onClick={() => setIsTabsVisible(true)}
+              className="p-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg border border-emerald-500/50 transition-colors flex items-center justify-center"
             >
-              {isTabsVisible ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <Menu className="w-5 h-5" />
             </button>
           </div>
-
-          {/* Quick Metrics Cards */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 bg-emerald-900/40 p-2 rounded-xl border border-emerald-700/50 flex-grow md:max-w-md">
-            <div className="px-3 py-1.5 text-center border-r border-emerald-700/50">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Total Santri</span>
-              <span className="text-base sm:text-lg font-bold text-white">{totalSantri}</span>
-            </div>
-            <div className="px-3 py-1.5 text-center border-r border-emerald-700/50">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Setoran</span>
-              <span className="text-base sm:text-lg font-bold text-white">{todaySetoranCount}</span>
-            </div>
-            <div className="px-3 py-1.5 text-center">
-              <span className="text-[10px] uppercase tracking-wider text-emerald-200/80 font-bold block">Kehadiran</span>
-              <span className="text-base sm:text-lg font-bold text-white">{todayAttendancePercent}%</span>
-            </div>
-          </div>
-          
-          {/* Hamburger Button Desktop */}
-          <button
-            onClick={() => setIsTabsVisible(!isTabsVisible)}
-            className="hidden md:flex p-2 bg-emerald-900/50 hover:bg-emerald-700 text-emerald-100 rounded-lg border border-emerald-600/50 transition-colors items-center space-x-2 ml-2"
-          >
-            {isTabsVisible ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            <span className="text-sm font-medium">{isTabsVisible ? 'Tutup Menu' : 'Menu'}</span>
-          </button>
         </div>
-
-        {/* Navigation Tabs */}
-        {isTabsVisible && (
-          <div className="mt-5 pt-4 border-t border-emerald-700/50 animate-in fade-in slide-in-from-top-2 duration-200">
-            <nav className="flex flex-col sm:flex-row flex-wrap gap-2">
-              <button
-                onClick={() => setActiveTab('absensi')}
-                className={\`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex-1 sm:flex-none justify-center sm:justify-start \${
-                  activeTab === 'absensi'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }\`}
-              >
-                <UserCheck className="w-4 h-4" />
-                <span>Absensi Santri</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('mutabaah')}
-                className={\`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex-1 sm:flex-none justify-center sm:justify-start \${
-                  activeTab === 'mutabaah'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }\`}
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Mutaba'ah Setoran</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('santri')}
-                className={\`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex-1 sm:flex-none justify-center sm:justify-start \${
-                  activeTab === 'santri'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }\`}
-              >
-                <Users className="w-4 h-4" />
-                <span>Data Santri & Raport</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('rekap')}
-                className={\`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex-1 sm:flex-none justify-center sm:justify-start \${
-                  activeTab === 'rekap'
-                    ? 'bg-white text-emerald-800 shadow-sm'
-                    : 'text-emerald-100 hover:bg-emerald-700 hover:text-white'
-                }\`}
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Rekapitulasi</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('kelola')}
-                className={\`flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors flex-1 sm:flex-none justify-center sm:justify-start \${
-                  activeTab === 'kelola'
-                    ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400 ring-offset-2 ring-offset-emerald-800'
-                    : 'bg-emerald-900/40 text-emerald-100 hover:bg-emerald-700 hover:text-white border border-emerald-700/50'
-                }\`}
-              >
-                <Settings className="w-4 h-4" />
-                <span>Kelola Data</span>
-              </button>
-            </nav>
-          </div>
-        )}
+        
+        {/* Mobile Date Picker (shows below on small screens) */}
+        <div className="flex sm:hidden items-center justify-between mt-3 pt-3 border-t border-emerald-700/50">
+           <span className="text-xs text-emerald-200">TA {pesantrenInfo.tahunAjaran} ({pesantrenInfo.semester})</span>
+           <div className="flex items-center space-x-1.5 bg-emerald-900/50 px-2 py-1 rounded-lg border border-emerald-700/50 text-emerald-100">
+              <Calendar className="w-3.5 h-3.5" />
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-transparent border-none text-xs text-white focus:outline-none cursor-pointer"
+              />
+            </div>
+        </div>
       </div>
+
+      {/* Navigation Drawer (Sidebar) */}
+      {isTabsVisible && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
+            onClick={() => setIsTabsVisible(false)}
+          ></div>
+          
+          {/* Sidebar Content */}
+          <div className="relative w-72 max-w-[85vw] h-full bg-white border-l border-slate-200 shadow-2xl animate-in slide-in-from-right duration-300 flex flex-col text-slate-800">
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/80 backdrop-blur-md">
+              <span className="font-bold text-slate-800">Menu Navigasi</span>
+              <button 
+                onClick={() => setIsTabsVisible(false)}
+                className="p-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-slate-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4">
+              <nav className="flex flex-col gap-2">
+                <button
+                  onClick={() => { setActiveTab('dashboard'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'dashboard'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }\`}
+                >
+                  <LayoutDashboard className={\`w-5 h-5 \${activeTab === 'dashboard' ? 'text-emerald-600' : 'text-slate-400'}\`} />
+                  <span>Dashboard</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('absensi'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'absensi'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }\`}
+                >
+                  <UserCheck className={\`w-5 h-5 \${activeTab === 'absensi' ? 'text-emerald-600' : 'text-slate-400'}\`} />
+                  <span>Absensi Santri</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('mutabaah'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'mutabaah'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }\`}
+                >
+                  <BookOpen className={\`w-5 h-5 \${activeTab === 'mutabaah' ? 'text-emerald-600' : 'text-slate-400'}\`} />
+                  <span>Mutaba'ah Setoran</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('santri'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'santri'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }\`}
+                >
+                  <Users className={\`w-5 h-5 \${activeTab === 'santri' ? 'text-emerald-600' : 'text-slate-400'}\`} />
+                  <span>Data Santri & Raport</span>
+                </button>
+                <button
+                  onClick={() => { setActiveTab('rekap'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'rekap'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  }\`}
+                >
+                  <BarChart3 className={\`w-5 h-5 \${activeTab === 'rekap' ? 'text-emerald-600' : 'text-slate-400'}\`} />
+                  <span>Rekapitulasi</span>
+                </button>
+                
+                <div className="my-3 border-t border-slate-100"></div>
+                
+                <button
+                  onClick={() => { setActiveTab('kelola'); setIsTabsVisible(false); }}
+                  className={\`flex items-center space-x-3 px-4 py-3.5 rounded-xl text-sm font-semibold transition-all w-full \${
+                    activeTab === 'kelola'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 border border-slate-200'
+                  }\`}
+                >
+                  <Settings className={\`w-5 h-5 \${activeTab === 'kelola' ? 'text-white' : 'text-slate-500'}\`} />
+                  <span>Kelola Data & Sync</span>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
 `;
 
-const matchStart = "{/* Main Header Content */}";
-const startIndex = code.indexOf(matchStart);
-if (startIndex !== -1) {
-  const newCode = code.substring(0, startIndex) + newMainContent;
-  fs.writeFileSync('src/components/Navbar.tsx', newCode);
-  console.log("Success");
-} else {
-  console.log("Could not find start index");
-}
+fs.writeFileSync('src/components/Navbar.tsx', navbarCode);
