@@ -14,11 +14,11 @@ import {
 } from '../data/initialData';
 
 const KEYS = {
-  PESANTREN: 'alfurqon_pesantren_info',
-  HALAQAH: 'alfurqon_halaqah_list',
-  SANTRI: 'alfurqon_santri_list',
-  ABSENSI: 'alfurqon_absensi_records',
-  MUTABAAH: 'alfurqon_mutabaah_records'
+  PESANTREN: 'v2_alfurqon_pesantren_info',
+  HALAQAH: 'v2_alfurqon_halaqah_list',
+  SANTRI: 'v2_alfurqon_santri_list',
+  ABSENSI: 'v2_alfurqon_absensi_records',
+  MUTABAAH: 'v2_alfurqon_mutabaah_records'
 };
 
 export function loadPesantrenInfo(): PesantrenInfo {
