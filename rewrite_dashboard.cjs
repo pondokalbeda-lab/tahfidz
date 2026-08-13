@@ -1,4 +1,6 @@
-import React from 'react';
+const fs = require('fs');
+
+let code = `import React from 'react';
 import { Users, BookOpen, UserCheck, Activity } from 'lucide-react';
 import { PesantrenInfo } from '../types';
 
@@ -86,3 +88,6 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     </div>
   );
 };
+`;
+
+fs.writeFileSync('src/components/DashboardTab.tsx', code);

@@ -285,7 +285,7 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
       </form>
 
       {/* Manage Halaqah List */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/60 space-y-4">
         <div className="flex justify-between items-center pb-3 border-b border-slate-100">
           <div className="flex items-center space-x-2">
             <Users className="w-5 h-5 text-emerald-600" />
@@ -370,7 +370,7 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
       </div>
 
       {/* Backup & Restore & Reset Data */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+      <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200/60 space-y-4">
         <div className="pb-3 border-b border-slate-100">
           <h2 className="text-lg font-bold text-slate-800">Penyimpanan & Cadangan Data</h2>
           <p className="text-xs text-slate-500">Ekspor, impor, atau atur ulang database lokal pesantren</p>
