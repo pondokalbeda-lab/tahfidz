@@ -122,31 +122,25 @@ export const KelolaDataTab: React.FC<KelolaDataTabProps> = ({
 
   const handleSyncToCloud = async () => {
     setIsSyncing(true);
-    setSyncMsg({ text: 'Menyinkronkan data ke Cloud...', type: '' });
-    const success = await syncToCloud();
-    if (success) {
-      setSyncMsg({ text: 'Data berhasil disinkronkan ke Cloud!', type: 'success' });
-    } else {
-      setSyncMsg({ text: 'Gagal menyinkronkan data ke Cloud.', type: 'error' });
-    }
+    setSyncMsg({ text: 'Menyinkronkan data ke Cloud Google Sheets...', type: '' });
+    const res = await syncToCloud();
+    setSyncMsg({ text: res.message, type: res.success ? 'success' : 'error' });
     setIsSyncing(false);
-    setTimeout(() => setSyncMsg({ text: '', type: '' }), 4000);
+    setTimeout(() => setSyncMsg({ text: '', type: '' }), 5000);
   };
 
   const handleFetchFromCloud = async () => {
-    if (!confirm('Peringatan: Mengambil data dari Cloud akan menimpa semua data lokal saat ini. Lanjutkan?')) return;
+    if (!confirm('Peringatan: Mengambil data dari Cloud akan menimpa data halaqah dan santri lokal saat ini dengan data dari Google Spreadsheet. Lanjutkan?')) return;
     
     setIsSyncing(true);
-    setSyncMsg({ text: 'Mengambil data dari Cloud...', type: '' });
-    const success = await fetchFromCloud();
-    if (success) {
-      setSyncMsg({ text: 'Data berhasil diambil dan diterapkan!', type: 'success' });
+    setSyncMsg({ text: 'Mengambil data dari Google Sheets...', type: '' });
+    const res = await fetchFromCloud();
+    setSyncMsg({ text: res.message, type: res.success ? 'success' : 'error' });
+    if (res.success) {
       onRefreshData();
-    } else {
-      setSyncMsg({ text: 'Gagal mengambil data dari Cloud.', type: 'error' });
     }
     setIsSyncing(false);
-    setTimeout(() => setSyncMsg({ text: '', type: '' }), 4000);
+    setTimeout(() => setSyncMsg({ text: '', type: '' }), 5000);
   };
 
   // Export JSON

@@ -52,24 +52,25 @@ export const RaportModal: React.FC<RaportModalProps> = ({
     <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-white rounded-3xl max-w-4xl w-full p-8 shadow-2xl space-y-6 max-h-[92vh] overflow-y-auto print:max-h-none print:shadow-none print:p-0 print:m-0 print:w-full print:rounded-none">
         {/* Action Bar (Hidden on Print) */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-200 print:hidden">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-200 print:hidden">
           <div className="flex items-center space-x-2">
-            <BookOpen className="w-6 h-6 text-emerald-600" />
-            <h2 className="text-xl font-bold text-slate-800">
+            <BookOpen className="w-5 h-5 text-emerald-600 shrink-0" />
+            <h2 className="text-lg sm:text-xl font-bold text-slate-800">
               Raport & Kartu Mutaba'ah Tahfidz
             </h2>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between sm:justify-end space-x-2 w-full sm:w-auto">
             <button
               onClick={handlePrint}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2 shadow-lg shadow-emerald-700/20"
+              className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg shadow-emerald-700/20 cursor-pointer"
             >
-              <Printer className="w-4 h-4" />
+              <Printer className="w-4 h-4 shrink-0" />
               <span>Cetak / Simpan PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100"
+              className="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 cursor-pointer shrink-0"
+              title="Tutup"
             >
               <X className="w-5 h-5" />
             </button>
@@ -77,16 +78,25 @@ export const RaportModal: React.FC<RaportModalProps> = ({
         </div>
 
         {/* PRINTABLE RAPORT CONTENT */}
-        <div className="p-6 border-2 border-emerald-800 rounded-2xl bg-white space-y-6 print:border-none print:p-0">
+        <div className="p-4 sm:p-6 border-2 border-emerald-800 rounded-2xl bg-white space-y-6 print:border-none print:p-0">
           {/* KOP SURAT PESANTREN */}
-          <div className="text-center pb-4 border-b-2 border-emerald-800/80 space-y-1">
-            <h1 className="text-2xl font-serif font-bold text-emerald-950 uppercase tracking-wide">
-              {pesantrenInfo.nama}
-            </h1>
-            <p className="text-xs font-semibold text-slate-700">{pesantrenInfo.lembaga}</p>
-            <p className="text-[11px] text-slate-500 font-serif italic">{pesantrenInfo.alamat}</p>
-            <div className="inline-block bg-emerald-800 text-white font-bold text-xs px-4 py-1 rounded-full uppercase tracking-widest mt-2">
-              RAPORT CAPAIAN TAHFIDZ AL-QUR'AN
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 pb-4 border-b-2 border-emerald-800/80 text-center sm:text-left">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-emerald-700/40 bg-white flex-shrink-0 shadow-xs">
+              <img 
+                src="/assets/aistudio/WhatsApp_Image_2026-10-29_at_08.20.28_3984ba02.jpeg" 
+                alt="Logo Pesantren" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="space-y-0.5 text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl font-serif font-bold text-emerald-950 uppercase tracking-wide">
+                {pesantrenInfo.nama}
+              </h1>
+              <p className="text-xs font-semibold text-slate-700">{pesantrenInfo.lembaga}</p>
+              <p className="text-[11px] text-slate-500 font-serif italic">{pesantrenInfo.alamat}</p>
+              <div className="inline-block bg-emerald-800 text-white font-bold text-[10px] sm:text-xs px-3 sm:px-4 py-0.5 rounded-full uppercase tracking-widest mt-1.5">
+                RAPORT CAPAIAN TAHFIDZ AL-QUR'AN
+              </div>
             </div>
           </div>
 

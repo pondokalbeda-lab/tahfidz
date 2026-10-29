@@ -3,7 +3,8 @@
  * Salin kode ini ke editor Apps Script (Extensions > Apps Script di Google Sheets Anda)
  * 
  * PENTING:
- * Setelah menyalin, lakukan DEPLOY ULANG (New Deployment) agar perubahan tersimpan di URL API.
+ * Setelah menyalin, lakukan DEPLOY ULANG (Deploy > New Deployment / Manage Deployments)
+ * agar perubahan aktif di URL Web App Anda.
  */
 
 function setupSheet() {
@@ -64,13 +65,15 @@ function setupSheet() {
 
 function doGet(e) {
   try {
-    let action = e.parameter.action;
+    let action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "get_all";
     if (action === "get_all") {
       let data = getAllData();
       return responseJson({ status: "success", data: data });
     }
-    return ContentService.createTextOutput("API Spreadsheet Al-Furqon berjalan! Tambahkan ?action=get_all untuk mengambil data.")
-      .setMimeType(ContentService.MimeType.TEXT);
+    return responseJson({ 
+      status: "success", 
+      message: "API Spreadsheet Al-Furqon berjalan! Gunakan ?action=get_all untuk mengambil data." 
+    });
   } catch (error) {
     return responseJson({ status: "error", message: error.toString() });
   }
@@ -83,7 +86,7 @@ function doPost(e) {
 
     if (action === "save_all") {
       saveAllData(payload.data);
-      return responseJson({ status: "success", message: "Data berhasil disimpan ke Spreadsheet" });
+      return responseJson({ status: "success", message: "Data berhasil disinkronisasi ke Spreadsheet" });
     }
     
     if (action === "ping") {
@@ -142,12 +145,23 @@ function getSheetDataAsObject(ss, sheetName) {
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return [];
   
-  const headers = data[0];
+  const tz = ss.getSpreadsheetTimeZone() || "Asia/Jakarta";
+  const headers = data[0].map(h => String(h).trim());
   const rows = data.slice(1);
-  return rows.map(row => {
+
+  // Filter out rows that are completely blank
+  const filteredRows = rows.filter(row => {
+    return row.some(cell => cell !== '' && cell !== null && cell !== undefined);
+  });
+
+  return filteredRows.map(row => {
     let obj = {};
     headers.forEach((header, index) => {
-      obj[header] = row[index];
+      let val = row[index];
+      if (val instanceof Date) {
+        val = Utilities.formatDate(val, tz, "yyyy-MM-dd");
+      }
+      obj[header] = val;
     });
     return obj;
   });

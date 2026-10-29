@@ -1,11 +1,112 @@
 @import "tailwindcss";
 
-html.dark {
-  filter: invert(0.92) hue-rotate(180deg);
-  background-color: #f8fafc; /* Keep original background color so invert makes it dark */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic: 'Amiri', serif;
 }
-html.dark img, 
-html.dark video, 
-html.dark [data-ignore-dark] {
-  filter: invert(1) hue-rotate(180deg);
+
+:root {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light dark;
+}
+
+/* Custom smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.8);
+}
+
+.font-arabic {
+  font-family: 'Amiri', serif;
+}
+
+/* Subtle luxury card gradient and borders */
+.tahfidz-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+}
+
+.dark .tahfidz-card {
+  background-color: #0f172a;
+  border-color: rgba(30, 41, 59, 0.85);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* Background Flow (Alur Background Estetik & Tenang) */
+.bg-flow-container {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 10% 15%, rgba(16, 185, 129, 0.07) 0px, transparent 40%),
+    radial-gradient(at 90% 25%, rgba(14, 165, 233, 0.05) 0px, transparent 45%),
+    radial-gradient(at 50% 85%, rgba(245, 158, 11, 0.04) 0px, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40 Q20 20 40 40 T80 40 M0 0 Q20 20 40 0 T80 0 M0 80 Q20 60 40 80 T80 80' fill='none' stroke='rgba(16,185,129,0.035)' stroke-width='1.2' stroke-dasharray='3 5'/%3E%3Cpolygon points='40,32 46,38 40,44 34,38' fill='none' stroke='rgba(217,119,6,0.035)' stroke-width='0.8'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+.dark .bg-flow-container {
+  background-color: #0b1120;
+  background-image: 
+    radial-gradient(at 10% 15%, rgba(16, 185, 129, 0.12) 0px, transparent 45%),
+    radial-gradient(at 90% 25%, rgba(14, 165, 233, 0.09) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(245, 158, 11, 0.06) 0px, transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40 Q20 20 40 40 T80 40 M0 0 Q20 20 40 0 T80 0 M0 80 Q20 60 40 80 T80 80' fill='none' stroke='rgba(52,211,153,0.05)' stroke-width='1.2' stroke-dasharray='3 5'/%3E%3Cpolygon points='40,32 46,38 40,44 34,38' fill='none' stroke='rgba(251,191,36,0.05)' stroke-width='0.8'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Ambient flowing wave ribbon */
+.wave-flow-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 280px;
+  pointer-events: none;
+  opacity: 0.65;
+  z-index: 0;
+}
+
+/* Print optimizations for Raport */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
 }
