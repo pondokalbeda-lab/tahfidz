@@ -248,7 +248,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   absensi: { desc: 'Presensi 4 sesi harian santri', badge: `${todayAttendancePercent}% Hadir` },
                   mutabaah: { desc: 'Input ziyadah, muraja\'ah & tasmi\'', badge: `${todaySetoranCount} Setoran` },
                   santri: { desc: 'Pencapaian setoran & raport', badge: `${totalSantri} Santri` },
-                  rekap: { desc: 'Peringkat santri berdasar jumlah setoran', badge: 'Ranking' },
+                  rekap: { desc: 'Rekap jumlah setoran & hafalan santri', badge: 'Hafalan' },
                   pengaturan: { desc: 'Kelola halaqah & ustadz pengampu', badge: 'Kelola' },
                   kelola: { desc: 'Sinkronisasi database Google Sheets', badge: 'Database' }
                 }[item.id as keyof typeof meta] || { desc: '', badge: '' };

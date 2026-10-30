@@ -42,8 +42,8 @@ export const NavigationTabBar: React.FC<NavigationTabBarProps> = ({
       id: 'rekap', 
       icon: BarChart3, 
       label: 'Rekapitulasi', 
-      desc: 'Peringkat & Rekap Setoran',
-      badge: 'Ranking'
+      desc: 'Rekap Jumlah Hafalan',
+      badge: 'Hafalan'
     },
     { 
       id: 'santri', 

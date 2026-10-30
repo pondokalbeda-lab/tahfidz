@@ -361,6 +361,7 @@ export default function App() {
               absensiRecords={absensiRecords}
               mutabaahRecords={mutabaahRecords}
               selectedDate={selectedDate}
+              pesantrenInfo={pesantrenInfo}
             />
           )}
 
