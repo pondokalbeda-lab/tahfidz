@@ -186,12 +186,19 @@ export const SantriTab: React.FC<SantriTabProps> = ({
         ) : (
           filteredSantri.map((santri) => {
             const halaqahObj = halaqahList.find((h) => h.id === santri.halaqahId);
+            const studentMutabaah = mutabaahRecords.filter((m) => m.santriId === santri.id);
+            const totalSetoran = studentMutabaah.length;
+            const ziyadahCount = studentMutabaah.filter((m) => m.jenis === 'ZIYADAH').length;
+            const murajaahCount = studentMutabaah.filter((m) => m.jenis === 'MURAJAAH').length;
+            const tasmiCount = studentMutabaah.filter((m) => m.jenis === 'TASMI').length;
+
+            // Pencapaian santri dihitung dari jumlah setoran (target milestone 30 setoran)
+            const targetSetoranMilestone = 30;
             const percentProgress = Math.min(
               100,
-              Math.round(((santri.currentJuz || 0) / (santri.targetJuz || 30)) * 100)
+              Math.round((totalSetoran / targetSetoranMilestone) * 100)
             );
 
-            const studentMutabaah = mutabaahRecords.filter((m) => m.santriId === santri.id);
             const studentAbsensi = absensiRecords.filter((a) => a.santriId === santri.id);
             const hadirCount = studentAbsensi.filter((a) => a.status === 'HADIR').length;
             const absensiTotal = studentAbsensi.length;
@@ -205,24 +212,24 @@ export const SantriTab: React.FC<SantriTabProps> = ({
                 <div>
                   {/* Top row */}
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-11 h-11 rounded-2xl bg-emerald-950 text-amber-300 font-serif font-black text-base flex items-center justify-center border border-emerald-800/80 shadow-xs">
+                    <div className="flex items-center space-x-3 min-w-0 flex-1">
+                      <div className="w-11 h-11 rounded-2xl bg-emerald-950 text-amber-300 font-serif font-black text-base flex items-center justify-center border border-emerald-800/80 shadow-xs shrink-0">
                         {santri.nama.charAt(0)}
                       </div>
-                      <div>
-                        <h3 className="font-bold text-slate-900 dark:text-white text-sm leading-tight">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-slate-900 dark:text-white text-sm leading-tight truncate">
                           {santri.nama}
                         </h3>
-                        <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5">
-                          {halaqahObj?.nama || 'Belum Ada Halaqah'}
+                        <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5 truncate">
+                          {halaqahObj?.nama || 'Belum Ada Halaqah'} · <span className="text-slate-500 dark:text-slate-400 font-normal">Juz {santri.currentJuz || 0}</span>
                         </p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">
                           NIS: {santri.nis}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center space-x-1 shrink-0">
                       <button
                         onClick={() => handleOpenEditModal(santri)}
                         className="text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
@@ -240,12 +247,14 @@ export const SantriTab: React.FC<SantriTabProps> = ({
                     </div>
                   </div>
 
-                  {/* Progress Bar Hafalan */}
+                  {/* Progress Bar Pencapaian Santri (Dihitung dari Jumlah yang Mereka Setoran) */}
                   <div className="mt-4 bg-slate-50 dark:bg-slate-900/60 p-3 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-slate-600 dark:text-slate-400 text-[11px]">Capaian Hafalan</span>
+                      <span className="font-semibold text-slate-600 dark:text-slate-400 text-[11px]">
+                        Pencapaian Setoran
+                      </span>
                       <span className="font-extrabold text-emerald-700 dark:text-emerald-400 text-[11px]">
-                        Juz {santri.currentJuz || 0} / {santri.targetJuz || 30} ({percentProgress}%)
+                        {totalSetoran} Kali Setoran ({percentProgress}%)
                       </span>
                     </div>
                     <div className="w-full bg-slate-200 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -254,17 +263,21 @@ export const SantriTab: React.FC<SantriTabProps> = ({
                         style={{ width: `${percentProgress}%` }}
                       />
                     </div>
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-0.5">
+                      <span>Rincian: {ziyadahCount} Ziyadah · {murajaahCount} Muraja'ah</span>
+                      <span className="font-semibold text-slate-700 dark:text-slate-300">{tasmiCount > 0 ? `${tasmiCount} Tasmi'` : '0 Tasmi\''}</span>
+                    </div>
                   </div>
 
                   {/* Mini Stats Grid */}
                   <div className="grid grid-cols-2 gap-2 mt-3 text-xs">
                     <div className="bg-slate-50/70 dark:bg-slate-900/40 p-2.5 rounded-xl text-center border border-slate-100 dark:border-slate-800">
                       <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-medium">Total Setoran</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{studentMutabaah.length} Selesai</span>
+                      <span className="font-extrabold text-emerald-700 dark:text-emerald-400">{totalSetoran} Selesai</span>
                     </div>
                     <div className="bg-slate-50/70 dark:bg-slate-900/40 p-2.5 rounded-xl text-center border border-slate-100 dark:border-slate-800">
                       <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-medium">Presensi</span>
-                      <span className="font-bold text-emerald-700 dark:text-emerald-400">{presenceRate}%</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{presenceRate}%</span>
                     </div>
                   </div>
                 </div>

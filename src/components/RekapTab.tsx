@@ -94,13 +94,15 @@ export const RekapTab: React.FC<RekapTabProps> = ({
   });
 
   santriRankings.sort((a, b) => {
-    if (b.currentJuz !== a.currentJuz) return b.currentJuz - a.currentJuz;
-    return b.setoranCount - a.setoranCount;
+    // Pencapaian dihitung dari jumlah yang mereka setoran
+    if (b.setoranCount !== a.setoranCount) return b.setoranCount - a.setoranCount;
+    if (b.avgScore !== a.avgScore) return b.avgScore - a.avgScore;
+    return b.attendanceRate - a.attendanceRate;
   });
 
   const handleExportCSV = () => {
     let csvContent = 'data:text/csv;charset=utf-8,';
-    csvContent += 'NIS,Nama Santri,Halaqah,Capaian Juz,Target Juz,Total Setoran,Kehadiran (%)\n';
+    csvContent += 'NIS,Nama Santri,Halaqah,Total Setoran (Pencapaian),Capaian Juz,Target Juz,Kehadiran (%)\n';
 
     filteredSantri.forEach((s) => {
       const hlq = halaqahList.find((h) => h.id === s.halaqahId);
@@ -109,7 +111,7 @@ export const RekapTab: React.FC<RekapTabProps> = ({
       const sHadir = sAbs.filter((a) => a.status === 'HADIR').length;
       const attRate = sAbs.length > 0 ? Math.round((sHadir / sAbs.length) * 100) : 100;
 
-      csvContent += `"${s.nis}","${s.nama}","${hlq?.nama || ''}",${s.currentJuz || 0},${s.targetJuz || 30},${sMutabaah.length},${attRate}%\n`;
+      csvContent += `"${s.nis}","${s.nama}","${hlq?.nama || ''}",${sMutabaah.length},${s.currentJuz || 0},${s.targetJuz || 30},${attRate}%\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
@@ -129,9 +131,9 @@ export const RekapTab: React.FC<RekapTabProps> = ({
     text += `- Muraja'ah: ${totalMurajaah} setoran\n`;
     text += `- Tingkat Kehadiran: ${attRate}%\n\n`;
     
-    text += `*Top 5 Santri Ter-Mutqin:*\n`;
+    text += `*Top 5 Santri Teraktif (Pencapaian Setoran Terbanyak):*\n`;
     santriRankings.slice(0, 5).forEach((item, idx) => {
-      text += `${idx + 1}. ${item.santri.nama} (${item.currentJuz} Juz, ${item.setoranCount} Setoran)\n`;
+      text += `${idx + 1}. ${item.santri.nama} (${item.setoranCount} Kali Setoran, Juz ${item.currentJuz})\n`;
     });
     
     const encodedText = encodeURIComponent(text);
@@ -277,24 +279,111 @@ export const RekapTab: React.FC<RekapTabProps> = ({
         </div>
       </div>
 
-      {/* Leaderboard & Ranking Santri */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-        <div className="flex items-center space-x-2 pb-3 border-b border-slate-100 dark:border-slate-800">
-          <Award className="w-5 h-5 text-amber-500" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
-            Peringkat Santri Mutqin Berdasarkan Capaian Hafalan
-          </h3>
+      {/* Leaderboard & Ranking Santri (Berdasarkan Jumlah Setoran) */}
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center space-x-2">
+            <Award className="w-5 h-5 text-amber-500 shrink-0" />
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              Peringkat Santri Teraktif Berdasarkan Jumlah Setoran
+            </h3>
+          </div>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold shrink-0">
+            {santriRankings.length} Santri
+          </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left border-collapse">
+        {/* Mobile View: Dedicated Card List (md:hidden) - Collision-Proof */}
+        <div className="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {santriRankings.map((item, index) => {
+            const hlq = halaqahList.find((h) => h.id === item.santri.halaqahId);
+            // Progress based on total setoran count towards 30 setoran benchmark
+            const progress = Math.min(100, Math.round((item.setoranCount / 30) * 100));
+
+            return (
+              <div key={item.santri.id} className="py-3.5 space-y-2.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    {/* Rank Badge */}
+                    <div className="shrink-0">
+                      {index === 0 ? (
+                        <span className="inline-flex items-center justify-center w-7 h-7 bg-amber-400 text-amber-950 rounded-xl font-black text-xs shadow-xs">
+                          1
+                        </span>
+                      ) : index === 1 ? (
+                        <span className="inline-flex items-center justify-center w-7 h-7 bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-100 rounded-xl font-black text-xs">
+                          2
+                        </span>
+                      ) : index === 2 ? (
+                        <span className="inline-flex items-center justify-center w-7 h-7 bg-amber-700/20 text-amber-800 dark:text-amber-300 rounded-xl font-black text-xs">
+                          3
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center justify-center w-7 h-7 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl font-bold text-xs">
+                          {index + 1}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="min-w-0">
+                      <h4 className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                        {item.santri.nama}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate">
+                        NIS {item.santri.nis} · {hlq?.nama || 'Tanpa Halaqah'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span className="text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded-lg shrink-0">
+                    {item.setoranCount}x Setoran
+                  </span>
+                </div>
+
+                {/* Progress bar based on setoran count */}
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-[10px] text-slate-500">
+                    <span>Pencapaian Setoran</span>
+                    <span className="font-semibold text-emerald-600">{item.setoranCount} Selesai ({progress}%)</span>
+                  </div>
+                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-emerald-500 h-full rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* 3 Metric Pills */}
+                <div className="grid grid-cols-3 gap-1.5 text-center text-[10px]">
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-400 block text-[9px]">Pencapaian</span>
+                    <strong className="text-emerald-700 dark:text-emerald-400 font-extrabold">{item.setoranCount} Kali</strong>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-400 block text-[9px]">Posisi Juz</span>
+                    <strong className="text-slate-800 dark:text-slate-200 font-semibold">Juz {item.currentJuz}</strong>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-800/60 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-400 block text-[9px]">Presensi</span>
+                    <strong className="text-slate-800 dark:text-slate-200 font-semibold">{item.attendanceRate}%</strong>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop View: Table with guaranteed min-width to avoid collision (hidden md:block) */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full min-w-[700px] text-xs text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800 uppercase tracking-wider text-[11px]">
                 <th className="p-3 text-center w-14">Rank</th>
                 <th className="p-3">Nama Santri</th>
                 <th className="p-3">Halaqah</th>
-                <th className="p-3 text-center">Capaian Juz</th>
-                <th className="p-3 text-center">Total Setoran</th>
+                <th className="p-3 text-center">Pencapaian Setoran</th>
+                <th className="p-3 text-center">Posisi Hafalan</th>
                 <th className="p-3 text-center">Rata-rata Nilai</th>
                 <th className="p-3 text-center">Presensi</th>
               </tr>
@@ -327,11 +416,13 @@ export const RekapTab: React.FC<RekapTabProps> = ({
                     </td>
                     <td className="p-3 text-slate-600 dark:text-slate-400 font-medium">{hlq?.nama || '—'}</td>
                     <td className="p-3 text-center">
-                      <span className="text-emerald-700 dark:text-emerald-400 font-extrabold text-xs">
-                        Juz {item.currentJuz} / {item.santri.targetJuz || 30}
+                      <span className="text-emerald-700 dark:text-emerald-400 font-extrabold text-xs bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70 px-2.5 py-1 rounded-lg">
+                        {item.setoranCount} Kali Setoran
                       </span>
                     </td>
-                    <td className="p-3 text-center font-bold text-slate-700 dark:text-slate-300">{item.setoranCount} Kali</td>
+                    <td className="p-3 text-center text-slate-700 dark:text-slate-300 font-medium">
+                      Juz {item.currentJuz} / {item.santri.targetJuz || 30}
+                    </td>
                     <td className="p-3 text-center">
                       <span className="text-slate-800 dark:text-slate-200 font-semibold">
                         {item.avgScore > 0 ? `${item.avgScore} Pts` : '—'}

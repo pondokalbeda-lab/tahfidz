@@ -24,7 +24,6 @@ import { MutabaahTab } from './components/MutabaahTab';
 import { SantriTab } from './components/SantriTab';
 import { RekapTab } from './components/RekapTab';
 import { KelolaDataTab } from './components/KelolaDataTab';
-import { DashboardTab } from './components/DashboardTab';
 import { PengaturanTab } from './components/PengaturanTab';
 import { NavigationTabBar } from './components/NavigationTabBar';
 import { fetchFromCloud, syncToCloud } from './utils/api';
@@ -37,7 +36,7 @@ export default function App() {
   const [absensiRecords, setAbsensiRecords] = useState<AbsensiRecord[]>(loadAbsensiRecords);
   const [mutabaahRecords, setMutabaahRecords] = useState<MutabaahRecord[]>(loadMutabaahRecords);
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'pengaturan' | 'kelola'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'absensi' | 'mutabaah' | 'santri' | 'rekap' | 'pengaturan' | 'kelola'>('absensi');
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
@@ -282,10 +281,14 @@ export default function App() {
           onSyncCloud={() => pullFromDatabase(true)}
         />
 
-        {/* Dedicated Navigation Tab Bar for Tablet & Mobile (Pilihan Tab) */}
-        <div className="xl:hidden">
-          <NavigationTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
-        </div>
+        {/* Prominent Large Navigation Menu Boxes (1-Page Main Hub) */}
+        <NavigationTabBar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab}
+          totalSantri={santriList.length}
+          todaySetoranCount={todaySetoranCount}
+          todayAttendancePercent={todayAttendancePercent}
+        />
 
         {/* Global Toast / Notification Banner */}
         {syncBanner && (
@@ -316,21 +319,7 @@ export default function App() {
         )}
 
         {/* Tab Content Body */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          {activeTab === 'dashboard' && (
-            <DashboardTab
-              pesantrenInfo={pesantrenInfo}
-              totalSantri={santriList.length}
-              todaySetoranCount={todaySetoranCount}
-              todayAttendancePercent={todayAttendancePercent}
-              selectedDate={selectedDate}
-              halaqahList={halaqahList}
-              santriList={santriList}
-              mutabaahRecords={mutabaahRecords}
-              absensiRecords={absensiRecords}
-              onNavigate={(tab) => setActiveTab(tab)}
-            />
-          )}
+        <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 w-full min-w-0">
           {activeTab === 'absensi' && (
             <AbsensiTab
               santriList={santriList}

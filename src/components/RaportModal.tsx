@@ -170,12 +170,12 @@ export const RaportModal: React.FC<RaportModalProps> = ({
                   <td className="p-2 border border-slate-300">Lulus Ujian Sesuai Target</td>
                 </tr>
                 <tr className="bg-emerald-50 font-bold">
-                  <td className="p-2 border border-slate-300 text-emerald-950">TOTAL CAPAIAN HAFALAN</td>
+                  <td className="p-2 border border-slate-300 text-emerald-950">TOTAL PENCAPAIAN SETORAN</td>
                   <td className="p-2 border border-slate-300 text-center text-emerald-950" colSpan={2}>
-                    {santri.currentJuz} Juz dari Target {santri.targetJuz} Juz
+                    {mutabaahRecords.length} Kali Setoran ({totalZiyadah.length} Ziyadah, {totalMurajaah.length} Muraja'ah, {totalTasmi.length} Tasmi')
                   </td>
                   <td className="p-2 border border-slate-300 text-emerald-950">
-                    Prosentase: {Math.round((santri.currentJuz / (santri.targetJuz || 30)) * 100)}%
+                    Posisi: Juz {santri.currentJuz} / {santri.targetJuz || 30}
                   </td>
                 </tr>
               </tbody>

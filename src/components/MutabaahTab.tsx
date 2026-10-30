@@ -508,7 +508,7 @@ export const MutabaahTab: React.FC<MutabaahTabProps> = ({
 
                     {/* Input Controls Row 2: Ayat Mulai, Ayat Selesai, Kualitas */}
                     <div className="grid grid-cols-12 gap-2">
-                      <div className="col-span-5">
+                      <div className="col-span-6">
                         <label className="block text-[10px] text-slate-400 font-medium mb-1">Ayat Mulai - Selesai</label>
                         <div className="flex items-center space-x-1">
                           <input
@@ -517,21 +517,21 @@ export const MutabaahTab: React.FC<MutabaahTabProps> = ({
                             placeholder="Mulai"
                             value={draft.ayatMulai}
                             onChange={(e) => handleDraftChange(santri.id, 'ayatMulai', e.target.value)}
-                            className="w-full text-xs text-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full text-xs text-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2 px-1 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
                           />
-                          <span className="text-slate-400 text-xs">-</span>
+                          <span className="text-slate-400 text-xs shrink-0">-</span>
                           <input
                             type="number"
                             min={1}
                             placeholder="Selesai"
                             value={draft.ayatSelesai}
                             onChange={(e) => handleDraftChange(santri.id, 'ayatSelesai', e.target.value)}
-                            className="w-full text-xs text-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            className="w-full text-xs text-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-2 px-1 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
                           />
                         </div>
                       </div>
 
-                      <div className="col-span-7">
+                      <div className="col-span-6">
                         <label className="block text-[10px] text-slate-400 font-medium mb-1">Kualitas Setoran</label>
                         <select
                           value={draft.kualitas}
@@ -584,7 +584,7 @@ export const MutabaahTab: React.FC<MutabaahTabProps> = ({
 
             {/* Desktop Table View (hidden md:block) */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[800px] text-left border-collapse">
                 <thead className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="p-3.5 w-10 text-center">No</th>

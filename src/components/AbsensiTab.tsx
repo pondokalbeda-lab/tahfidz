@@ -161,7 +161,7 @@ export const AbsensiTab: React.FC<AbsensiTabProps> = ({
     <div className="space-y-6 animate-in fade-in duration-300">
       
       {/* Top Header Card */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-5">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-4 sm:space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
             <div className="flex items-center space-x-2">
@@ -425,7 +425,7 @@ export const AbsensiTab: React.FC<AbsensiTabProps> = ({
 
             {/* Desktop Table View (hidden md:block) */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[650px] text-left border-collapse">
                 <thead className="bg-slate-50/80 dark:bg-slate-800/60 text-[11px] uppercase text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="p-3.5 w-12 text-center">No</th>

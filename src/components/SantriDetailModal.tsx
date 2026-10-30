@@ -82,12 +82,12 @@ export const SantriDetailModal: React.FC<SantriDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Overview Cards */}
+        {/* Overview Cards (Pencapaian Berdasarkan Jumlah Setoran) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
-          <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block font-medium">Capaian Hafalan</span>
-            <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">
-              {santri.currentJuz || 0} / {santri.targetJuz || 30} Juz
+          <div className="bg-emerald-50/70 dark:bg-emerald-950/40 p-3 rounded-xl border border-emerald-200/80 dark:border-emerald-800/60">
+            <span className="text-emerald-800 dark:text-emerald-300 block font-bold">Pencapaian Setoran</span>
+            <span className="text-lg font-extrabold text-emerald-700 dark:text-emerald-400 mt-0.5 block">
+              {mutabaahRecords.length} Kali Setoran
             </span>
           </div>
 
@@ -106,9 +106,9 @@ export const SantriDetailModal: React.FC<SantriDetailModalProps> = ({
           </div>
 
           <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/80 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400 block font-medium">Total Setoran</span>
+            <span className="text-slate-500 dark:text-slate-400 block font-medium">Posisi Hafalan</span>
             <span className="text-lg font-bold text-slate-800 dark:text-slate-200 mt-0.5 block">
-              {mutabaahRecords.length} Kali
+              Juz {santri.currentJuz || 0} / {santri.targetJuz || 30}
             </span>
           </div>
         </div>

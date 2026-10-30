@@ -18,27 +18,9 @@ import {
   Shield,
   Layers,
   ChevronRight,
-  Info,
-  Cloud,
-  CloudUpload,
-  CloudDownload,
-  Database,
-  RefreshCw,
-  Copy,
-  Check,
-  CheckCircle,
-  ExternalLink
+  Info
 } from 'lucide-react';
 import { Halaqah, Santri, PesantrenInfo } from '../types';
-import {
-  getApiUrl,
-  setApiUrl,
-  resetApiUrl,
-  testCloudConnection,
-  syncToCloud,
-  fetchFromCloud,
-  DEFAULT_API_URL
-} from '../utils/api';
 
 interface PengaturanTabProps {
   halaqahList: Halaqah[];
@@ -59,8 +41,8 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
   onSavePesantrenInfo,
   onRefreshData,
 }) => {
-  // Sub-tab: 'halaqah' | 'cloud' | 'pesantren'
-  const [subTab, setSubTab] = useState<'halaqah' | 'cloud' | 'pesantren'>('halaqah');
+  // Sub-tab: 'halaqah' | 'pesantren' (Integrasi Spreadsheet ada di menu khusus Cloud)
+  const [subTab, setSubTab] = useState<'halaqah' | 'pesantren'>('halaqah');
 
   // Selected Halaqah ID for editing
   const [selectedHalaqahId, setSelectedHalaqahId] = useState<string>(() => {
@@ -106,90 +88,6 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
 
   // Pesantren form
   const [pesantrenForm, setPesantrenForm] = useState<PesantrenInfo>(pesantrenInfo);
-
-  // Cloud API state
-  const [apiUrl, setApiUrlState] = useState<string>(getApiUrl);
-  const [isTesting, setIsTesting] = useState(false);
-  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
-  const [isFetchingCloud, setIsFetchingCloud] = useState(false);
-  const [testResult, setTestResult] = useState<{
-    success: boolean;
-    message: string;
-    halaqahCount?: number;
-    santriCount?: number;
-  } | null>(null);
-  const [copiedUrl, setCopiedUrl] = useState(false);
-
-  const handleTestConnection = async () => {
-    setIsTesting(true);
-    setTestResult(null);
-    try {
-      const res = await testCloudConnection(apiUrl);
-      setTestResult(res);
-      if (res.success) {
-        showToast(res.message, 'success');
-      } else {
-        showToast(res.message, 'error');
-      }
-    } finally {
-      setIsTesting(false);
-    }
-  };
-
-  const handleSaveApiUrl = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!apiUrl.trim().startsWith('http')) {
-      showToast('URL API tidak valid. Harus diawali http:// atau https://', 'error');
-      return;
-    }
-    setApiUrl(apiUrl.trim());
-    showToast('URL Google Apps Script berhasil disimpan!', 'success');
-  };
-
-  const handleResetApiUrl = () => {
-    const defaultUrl = resetApiUrl();
-    setApiUrlState(defaultUrl);
-    setTestResult(null);
-    showToast('URL API berhasil dikembalikan ke alamat bawaan.', 'info');
-  };
-
-  const handleSyncCloud = async () => {
-    setIsSyncingCloud(true);
-    try {
-      const res = await syncToCloud(apiUrl);
-      if (res.success) {
-        showToast(res.message, 'success');
-      } else {
-        showToast(res.message, 'error');
-      }
-    } finally {
-      setIsSyncingCloud(false);
-    }
-  };
-
-  const handleFetchCloud = async () => {
-    if (!window.confirm('Ambil data dari Google Spreadsheet? Tindakan ini akan memperbarui data halaqah dan santri lokal sesuai isi Spreadsheet Anda.')) {
-      return;
-    }
-    setIsFetchingCloud(true);
-    try {
-      const res = await fetchFromCloud(apiUrl);
-      if (res.success) {
-        showToast(res.message, 'success');
-        onRefreshData?.();
-      } else {
-        showToast(res.message, 'error');
-      }
-    } finally {
-      setIsFetchingCloud(false);
-    }
-  };
-
-  const handleCopyUrl = () => {
-    navigator.clipboard.writeText(apiUrl);
-    setCopiedUrl(true);
-    setTimeout(() => setCopiedUrl(false), 2000);
-  };
 
   // Sync state whenever selected halaqah changes
   useEffect(() => {
@@ -427,72 +325,37 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
           </div>
         </div>
 
-        {/* Tab Selector */}
-        <div className="w-full sm:w-auto grid grid-cols-1 sm:grid-cols-3 gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+        {/* Tab Selector (2 Subtab Bersih: Halaqah & Profil Pesantren) */}
+        <div className="w-full sm:w-auto grid grid-cols-2 gap-1.5 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
           <button
             onClick={() => setSubTab('halaqah')}
-            className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
+            type="button"
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
               subTab === 'halaqah'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50'
             }`}
           >
             <Users className="w-3.5 h-3.5 shrink-0" />
-            <span>Pengampu & Anggota</span>
-          </button>
-          <button
-            onClick={() => setSubTab('cloud')}
-            className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
-              subTab === 'cloud'
-                ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            <Cloud className="w-3.5 h-3.5 shrink-0" />
-            <span>Integrasi Spreadsheet</span>
+            <span className="truncate">Pengampu & Halaqah</span>
           </button>
           <button
             onClick={() => setSubTab('pesantren')}
-            className={`px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 cursor-pointer ${
+            type="button"
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center space-x-2 cursor-pointer ${
               subTab === 'pesantren'
-                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                ? 'bg-emerald-600 text-white shadow-xs font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50'
             }`}
           >
             <Building2 className="w-3.5 h-3.5 shrink-0" />
-            <span>Profil Lembaga</span>
+            <span className="truncate">Profil Lembaga</span>
           </button>
         </div>
       </div>
 
       {subTab === 'halaqah' && (
         <div className="space-y-6">
-          {/* Empty Data Alert with 1-Click Cloud Fetch */}
-          {santriList.length === 0 && (
-            <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-700 dark:text-emerald-300 flex-shrink-0">
-                  <CloudDownload className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 dark:text-slate-100">
-                    Data Santri & Halaqah Masih Kosong di Penyimpanan Lokal
-                  </p>
-                  <p className="text-[11px] text-slate-600 dark:text-slate-400">
-                    API Google Spreadsheet sudah terhubung. Anda dapat langsung menarik 95 santri dan 13 halaqah dari spreadsheet ke aplikasi.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleFetchCloud}
-                disabled={isFetchingCloud}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition flex items-center justify-center space-x-2 flex-shrink-0 shadow-sm cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isFetchingCloud ? 'animate-spin' : ''}`} />
-                <span>{isFetchingCloud ? 'Mengambil Data...' : 'Tarik Data dari Spreadsheet'}</span>
-              </button>
-            </div>
-          )}
 
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -560,7 +423,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
               </button>
             </div>
 
-            {/* List of Halaqah Pills */}
+            {/* List of Halaqah Cards Grid */}
             {halaqahList.length === 0 ? (
               <div className="p-8 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl space-y-2">
                 <Layers className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
@@ -580,7 +443,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-thin">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-2.5">
                 {halaqahList.map(h => {
                   const isSelected = h.id === selectedHalaqahId;
                   const memberCount = santriList.filter(s => s.halaqahId === h.id).length;
@@ -589,30 +452,33 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                     <button
                       key={h.id}
                       onClick={() => setSelectedHalaqahId(h.id)}
-                      className={`flex-shrink-0 text-left px-3.5 py-2.5 rounded-xl border transition-all cursor-pointer ${
+                      type="button"
+                      className={`text-left p-2.5 sm:p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between min-w-0 ${
                         isSelected
-                          ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900 shadow-sm'
-                          : 'bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm ring-2 ring-emerald-500/30 dark:ring-emerald-400/20'
+                          : 'bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-600 hover:bg-white dark:hover:bg-slate-800'
                       }`}
                     >
-                      <div className="flex items-center space-x-2">
-                        <span className="font-bold text-xs truncate max-w-[150px] sm:max-w-xs">{h.nama}</span>
+                      <div className="flex items-start justify-between gap-1 mb-1.5 min-w-0">
+                        <span className={`font-bold text-xs truncate flex-1 min-w-0 ${isSelected ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
+                          {h.nama}
+                        </span>
                         <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                          className={`text-[10px] px-1.5 py-0.2 rounded-md font-bold shrink-0 ml-1 ${
                             isSelected
-                              ? 'bg-emerald-500 text-white'
+                              ? 'bg-white/20 text-white'
                               : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
                           }`}
                         >
-                          {memberCount} santri
+                          {memberCount}
                         </span>
                       </div>
                       <div
-                        className={`text-[10px] mt-0.5 truncate max-w-[180px] ${
-                          isSelected ? 'text-slate-300 dark:text-slate-600' : 'text-slate-500 dark:text-slate-400'
+                        className={`text-[10px] truncate block ${
+                          isSelected ? 'text-emerald-100' : 'text-slate-500 dark:text-slate-400'
                         }`}
                       >
-                        Pengampu: {h.musyrif || '-'}
+                        {h.musyrif || 'Belum ada pengampu'}
                       </div>
                     </button>
                   );
@@ -858,13 +724,13 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                           <div
                             key={santri.id}
                             onClick={() => handleToggleSantri(santri.id)}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between select-none ${
+                            className={`p-2.5 sm:p-3 rounded-xl border transition-all cursor-pointer flex flex-col xs:flex-row xs:items-center justify-between gap-2 select-none min-w-0 ${
                               isChecked
-                                ? 'bg-emerald-50/70 border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800'
+                                ? 'bg-emerald-50/70 border-emerald-300 dark:bg-emerald-950/20 dark:border-emerald-800 shadow-2xs'
                                 : 'bg-slate-50/70 border-slate-200/80 dark:bg-slate-800/50 dark:border-slate-700/80 hover:bg-slate-100/70 dark:hover:bg-slate-800'
                             }`}
                           >
-                            <div className="flex items-center space-x-3 min-w-0">
+                            <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0 flex-1">
                               {/* Custom Checkbox visual */}
                               <div className="flex-shrink-0">
                                 {isChecked ? (
@@ -890,7 +756,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                               </div>
 
                               {/* Student Details */}
-                              <div className="min-w-0">
+                              <div className="min-w-0 flex-1">
                                 <p
                                   className={`text-xs font-bold truncate ${
                                     isChecked
@@ -900,20 +766,20 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                                 >
                                   {santri.nama}
                                 </p>
-                                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                                  NIS: {santri.nis || '-'} • Target: {santri.targetJuz || 30} Juz (Saat ini Juz {santri.currentJuz || 1})
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono truncate">
+                                  NIS: {santri.nis || '-'} • Target: {santri.targetJuz || 30} Juz
                                 </p>
                               </div>
                             </div>
 
-                            {/* Status Pill on the Right */}
-                            <div className="flex-shrink-0 ml-2">
+                            {/* Status Pill on the Right / Below on ultra narrow screens */}
+                            <div className="flex-shrink-0 self-start xs:self-center pl-7.5 xs:pl-0">
                               {isChecked ? (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-600 text-white">
                                   ✓ Anggota Ini
                                 </span>
                               ) : currentOtherHalaqah ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 max-w-[130px] sm:max-w-none truncate">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800 truncate max-w-[150px] sm:max-w-none">
                                   Di: {currentOtherHalaqah.nama}
                                 </span>
                               ) : (
@@ -974,10 +840,10 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                       key={h.id}
                       className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 space-y-2.5"
                     >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h5 className="font-bold text-sm text-slate-900 dark:text-slate-100">{h.nama}</h5>
-                          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                      <div className="flex items-start justify-between gap-2 min-w-0">
+                        <div className="min-w-0 flex-1">
+                          <h5 className="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{h.nama}</h5>
+                          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium truncate">
                             Pengampu: <strong className="text-emerald-700 dark:text-emerald-400">{h.musyrif}</strong>
                           </p>
                         </div>
@@ -987,7 +853,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                             setSelectedHalaqahId(h.id);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                           }}
-                          className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center space-x-0.5 cursor-pointer"
+                          className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline flex items-center space-x-0.5 cursor-pointer shrink-0"
                         >
                           <span>Atur</span>
                           <ChevronRight className="w-3.5 h-3.5" />
@@ -995,7 +861,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                       </div>
 
                       {h.keterangan && (
-                        <p className="text-[11px] text-slate-400 italic">{h.keterangan}</p>
+                        <p className="text-[11px] text-slate-400 italic break-words">{h.keterangan}</p>
                       )}
 
                       <div>
@@ -1005,11 +871,11 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
                         {members.length === 0 ? (
                           <span className="text-[11px] text-slate-400 italic">Belum ada anggota dipilih.</span>
                         ) : (
-                          <div className="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+                          <div className="flex flex-wrap gap-1 max-h-28 overflow-y-auto pr-0.5 scrollbar-thin">
                             {members.map(m => (
                               <span
                                 key={m.id}
-                                className="text-[10px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md font-medium text-slate-700 dark:text-slate-300"
+                                className="text-[10px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md font-medium text-slate-700 dark:text-slate-300 truncate max-w-full"
                               >
                                 {m.nama}
                               </span>
@@ -1026,200 +892,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
         </div>
       )}
 
-      {/* Subtab: Google Spreadsheet Cloud API Integration */}
-      {subTab === 'cloud' && (
-        <div className="space-y-6 max-w-4xl">
-          {/* Cloud API Status Header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-200/80 dark:border-slate-800 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 gap-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
-                  <Cloud className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
-                    Koneksi Google Spreadsheet (Apps Script)
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Aplikasi terhubung ke backend Google Apps Script untuk menarik dan menyimpan data
-                  </p>
-                </div>
-              </div>
 
-              <div className="flex items-center space-x-2">
-                <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span>Endpoint Aktif</span>
-                </span>
-              </div>
-            </div>
-
-            {/* API URL Form */}
-            <form onSubmit={handleSaveApiUrl} className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center space-x-1.5">
-                    <Database className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>URL Web App Google Apps Script (/exec)</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleCopyUrl}
-                    className="text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline flex items-center space-x-1 cursor-pointer"
-                  >
-                    {copiedUrl ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                    <span>{copiedUrl ? 'Tersalin!' : 'Salin URL'}</span>
-                  </button>
-                </div>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={apiUrl}
-                    onChange={e => setApiUrlState(e.target.value)}
-                    placeholder="https://script.google.com/macros/s/.../exec"
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-800 dark:text-slate-200 font-mono tracking-tight"
-                    required
-                  />
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">
-                  URL ini menangani permintaan data <code className="text-emerald-600">?action=get_all</code> dan penyimpanan <code className="text-emerald-600">action: save_all</code>.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
-                <div className="flex items-center space-x-2">
-                  <button
-                    type="submit"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center space-x-1.5 shadow-sm cursor-pointer"
-                  >
-                    <Save className="w-3.5 h-3.5" />
-                    <span>Simpan Perubahan URL</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleResetApiUrl}
-                    className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold px-3 py-2 rounded-xl transition cursor-pointer"
-                  >
-                    Reset Bawaan
-                  </button>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleTestConnection}
-                  disabled={isTesting}
-                  className="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs font-bold px-4 py-2 rounded-xl transition flex items-center space-x-2 shadow-xs cursor-pointer disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 text-emerald-600 ${isTesting ? 'animate-spin' : ''}`} />
-                  <span>{isTesting ? 'Menguji Koneksi...' : 'Uji Koneksi API'}</span>
-                </button>
-              </div>
-            </form>
-
-            {/* Test Connection Result Box */}
-            {testResult && (
-              <div
-                className={`p-4 rounded-xl text-xs space-y-1.5 border animate-in fade-in ${
-                  testResult.success
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
-                    : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-900 dark:text-rose-200'
-                }`}
-              >
-                <div className="flex items-center space-x-2 font-bold">
-                  {testResult.success ? (
-                    <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                  )}
-                  <span>{testResult.message}</span>
-                </div>
-                {testResult.success && (
-                  <div className="flex flex-wrap gap-2 pt-1 text-[11px]">
-                    <span className="bg-white/80 dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-300 dark:border-emerald-700 font-medium">
-                      Kelompok Halaqah: <strong>{testResult.halaqahCount}</strong>
-                    </span>
-                    <span className="bg-white/80 dark:bg-slate-900/80 px-2.5 py-1 rounded-lg border border-emerald-300 dark:border-emerald-700 font-medium">
-                      Santri Terdaftar: <strong>{testResult.santriCount}</strong>
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Cloud Action Cards (Tarik Data vs Simpan Data) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Pull from Cloud */}
-            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center">
-                  <CloudDownload className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-                  Tarik Data dari Spreadsheet
-                </h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Unduh 95 santri dan 13 halaqah terbaru dari Google Sheets. Data di perangkat lokal akan diperbarui sesuai isi spreadsheet.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleFetchCloud}
-                disabled={isFetchingCloud}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-sm cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`w-4 h-4 ${isFetchingCloud ? 'animate-spin' : ''}`} />
-                <span>{isFetchingCloud ? 'Sedang Mengambil Data...' : 'Tarik Data dari Cloud'}</span>
-              </button>
-            </div>
-
-            {/* Push to Cloud */}
-            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center">
-                  <CloudUpload className="w-5 h-5" />
-                </div>
-                <h4 className="font-bold text-sm text-slate-900 dark:text-slate-100">
-                  Simpan Data ke Spreadsheet
-                </h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Unggah pembagian santri, nama pengampu halaqah, presensi absensi, dan mutaba'ah yang telah Anda atur ke Google Sheets.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSyncCloud}
-                disabled={isSyncingCloud}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-sm cursor-pointer disabled:opacity-50"
-              >
-                <CloudUpload className="w-4 h-4" />
-                <span>{isSyncingCloud ? 'Sedang Menyimpan ke Cloud...' : 'Simpan Perubahan ke Cloud'}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Information & Architecture Card */}
-          <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 text-xs space-y-3">
-            <div className="flex items-center space-x-2 text-slate-800 dark:text-slate-200 font-bold">
-              <Info className="w-4 h-4 text-emerald-600" />
-              <span>Cara Kerja Sinkronisasi Data Spreadsheet</span>
-            </div>
-            <ul className="space-y-2 text-slate-600 dark:text-slate-300 list-disc list-inside">
-              <li>
-                <strong>Pengampu & Anggota Halaqah:</strong> Saat Anda mencentang santri pada halaqah (seperti Umar, Abu Bakar, dll.) lalu menekan <em>"Simpan Perubahan ke Cloud"</em>, sheet akan otomatis mencatat ID halaqah pada data santri.
-              </li>
-              <li>
-                <strong>Absensi & Mutaba'ah:</strong> Setiap catatan setoran hafalan harian dan absensi presensi disimpan aman di Google Spreadsheet secara terstruktur.
-              </li>
-              <li>
-                <strong>Akses Multi-Device:</strong> Anda atau musyrif lain dapat membuka aplikasi di perangkat lain dan menekan <em>"Tarik Data dari Cloud"</em> untuk mendapatkan data terbaru.
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
 
       {/* Subtab: Pesantren Profile Settings */}
       {subTab === 'pesantren' && (
@@ -1315,7 +988,7 @@ export const PengaturanTab: React.FC<PengaturanTabProps> = ({
           <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
             <button
               type="submit"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition flex items-center space-x-2 shadow-sm cursor-pointer"
+              className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition flex items-center justify-center space-x-2 shadow-sm cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>Simpan Profil Pesantren</span>
